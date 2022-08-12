@@ -1,15 +1,16 @@
-package dev.zio.quickstart
+package xyz.trival.image_viewer
 
+import xyz.trival.image_viewer.models.*
 import caliban.GraphQL.graphQL
 import caliban.{RootResolver, ZHttpAdapter}
-import dev.zio.quickstart.models._
-import zhttp.http._
+import zhttp.http.*
 import zhttp.service.Server
-import zio.ZIOAppDefault
+import zio.*
 
 import scala.language.postfixOps
+import caliban.CalibanError
 
-object MainApp extends ZIOAppDefault {
+object MainApp extends ZIOAppDefault:
 
   private val employees = List(
     Employee("Alex", Role.DevOps),
@@ -21,14 +22,14 @@ object MainApp extends ZIOAppDefault {
   )
 
   override def run =
-    graphQL(
+    graphQL[Any, Queries, Unit, Unit](
       RootResolver(
         Queries(
           args => employees.filter(e => args.role == e.role),
           args => employees.find(e => e.name == args.name)
         )
       )
-    ).interpreter.flatMap(interpreter =>
+    ).interpreter.flatMap(interpreter => {
       Server
         .start(
           port = 8088,
@@ -36,6 +37,4 @@ object MainApp extends ZIOAppDefault {
             ZHttpAdapter.makeHttpService(interpreter)
           }
         )
-    )
-
-}
+    })

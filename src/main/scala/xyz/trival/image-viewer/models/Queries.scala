@@ -1,4 +1,4 @@
-package dev.zio.quickstart.models
+package xyz.trival.image_viewer.models
 
 import caliban.schema.Annotations.GQLDescription
 
