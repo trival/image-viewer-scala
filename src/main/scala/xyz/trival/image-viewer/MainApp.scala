@@ -5,7 +5,7 @@ import caliban.GraphQL.graphQL
 import caliban.{RootResolver, ZHttpAdapter}
 import zhttp.http.*
 import zhttp.service.Server
-import zio.*
+import zio.ZIOAppDefault
 
 import scala.language.postfixOps
 import caliban.CalibanError
@@ -22,7 +22,7 @@ object MainApp extends ZIOAppDefault:
   )
 
   override def run =
-    graphQL[Any, Queries, Unit, Unit](
+    graphQL(
       RootResolver(
         Queries(
           args => employees.filter(e => args.role == e.role),
@@ -33,7 +33,7 @@ object MainApp extends ZIOAppDefault:
       Server
         .start(
           port = 8088,
-          http = Http.collectHttp { case _ -> !! / "api" / "graphql" =>
+          http = Http.collectHttp[Request] { case _ -> !! / "api" / "graphql" =>
             ZHttpAdapter.makeHttpService(interpreter)
           }
         )
