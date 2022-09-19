@@ -1,6 +1,6 @@
 package xyz.trival.image_viewer
 
-import xyz.trival.image_viewer.queries.*
+import xyz.trival.image_viewer.graphql.*
 import caliban.GraphQL.graphQL
 import caliban.{RootResolver, ZHttpAdapter}
 import zhttp.http.*
@@ -13,11 +13,7 @@ object MainApp extends ZIOAppDefault:
   private val graphiql = Http.fromStream(ZStream.fromResource("graphiql.html"))
 
   override def run =
-    graphQL(
-      RootResolver(
-        Queries()
-      )
-    ).interpreter.flatMap(interpreter => {
+    GraphQLApi.api.interpreter.flatMap(interpreter => {
       Server
         .start(
           port = 8088,

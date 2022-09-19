@@ -11,7 +11,7 @@ sbt run
 You can reload the application in watchmode from within the sbt console (using [sbt-revolver](https://github.com/spray/sbt-revolver))
 
 ```scala
-~ reStart
+~ backend/reStart
 ```
 
 ## TODOS
