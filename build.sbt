@@ -31,6 +31,13 @@ lazy val frontend = project
   .in(file("frontend"))
   .enablePlugins(ScalaJSPlugin, CompileTimeCalibanClientPlugin)
   .disablePlugins(RevolverPlugin)
+  .settings(
+    libraryDependencies ++= Seq(
+      "dev.zio" %%% "zio" % zioVersion,
+      "com.softwaremill.sttp.client3" %%% "core" % "3.8.0",
+      "com.softwaremill.sttp.client3" %%% "zio" % "3.8.0"
+    )
+  )
   .settings(scalaJSUseMainModuleInitializer := true)
   .settings(
     Compile / ctCalibanClient / ctCalibanClientsSettings := Seq(backend)
