@@ -4,7 +4,9 @@ import caliban.RootResolver
 import caliban.GraphQL.graphQL
 import caliban.schema.Annotations.GQLDescription
 
+// root schema definition
 object Operations:
+
   case class Queries(
       @GQLDescription("test query")
       test: () => String
@@ -12,7 +14,11 @@ object Operations:
 
   case class Mutations()
 
+end Operations
+
+// graphQL schema implementation
 object Resolver:
+
   val queries = Operations.Queries(
     test = () => "test query result, hello caliban graphql!"
   )
@@ -21,8 +27,10 @@ object Resolver:
 
   val root = RootResolver(queries)
 
-object GraphQLApi:
+end Resolver
 
+// api export
+object GraphQLApi:
   val api = graphQL(
     Resolver.root
   )
