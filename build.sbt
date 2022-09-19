@@ -1,4 +1,4 @@
-val scalaVer = "3.1.3"
+val scalaVer = "3.2.0"
 
 val zioVersion = "2.0.2"
 val calibanVersion = "2.0.1"
@@ -12,9 +12,9 @@ lazy val backend = project
   .settings(
     libraryDependencies ++= Seq(
       "dev.zio" %% "zio" % zioVersion,
+      "io.d11" %% "zhttp" % "2.0.0-RC10",
       "com.github.ghostdogpr" %% "caliban" % calibanVersion,
-      "com.github.ghostdogpr" %% "caliban-zio-http" % calibanVersion,
-      "io.d11" %% "zhttp" % "2.0.0-RC10"
+      "com.github.ghostdogpr" %% "caliban-zio-http" % calibanVersion
     )
   )
   .settings(
@@ -35,7 +35,8 @@ lazy val frontend = project
     libraryDependencies ++= Seq(
       "dev.zio" %%% "zio" % zioVersion,
       "com.softwaremill.sttp.client3" %%% "core" % "3.8.0",
-      "com.softwaremill.sttp.client3" %%% "zio" % "3.8.0"
+      "com.softwaremill.sttp.client3" %%% "zio" % "3.8.0",
+      "com.github.ghostdogpr" %%% "caliban-client" % calibanVersion
     )
   )
   .settings(scalaJSUseMainModuleInitializer := true)

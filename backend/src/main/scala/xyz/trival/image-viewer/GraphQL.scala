@@ -14,7 +14,7 @@ object Operations:
 
 object Resolver:
   val queries = Operations.Queries(
-    test = () => "test"
+    test = () => "test query result, hello caliban graphql!"
   )
 
   val mutations = Operations.Mutations()
