@@ -3,6 +3,7 @@
 .vscode
 .bloop
 .bsp
+.idea
 project/.bloop
 project/project
 project/target
