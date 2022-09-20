@@ -14,5 +14,5 @@ object Hello extends ZIOAppDefault:
     _ <- Console.printLine(test)
     test <- request
     _ <- Console.printLine(test)
-    - <- Console.printLine("Goodbye caliban client!")
+    _ <- Console.printLine("Goodbye caliban client!")
   yield ()
