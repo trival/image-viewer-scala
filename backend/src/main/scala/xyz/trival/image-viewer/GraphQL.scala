@@ -20,7 +20,8 @@ end Operations
 object Resolver:
 
   val queries = Operations.Queries(
-    test = () => "test query result, hello caliban graphql!"
+    test = () =>
+      "test query result, hello caliban graphql! " + System.currentTimeMillis()
   )
 
   val mutations = Operations.Mutations()

@@ -1,21 +1,18 @@
 package test_scalajs
 
-import xyz.trival.image_viewer.graphql.generated.ApiClient
-import sttp.client3.{*, given}
-import sttp.client3.impl.zio.{*, given}
+import xyz.trival.image_viewer.graphql.generated.ApiSchema
+import xyz.trival.image_viewer.graphql.Api
 import zio.*
 
 object Hello extends ZIOAppDefault:
-  val backend = FetchZioBackend()
-  val serverUrl = uri"http://localhost:8088/api/graphql"
 
-  val q = ApiClient.Queries.test
-
-  val result =
-    q.toRequest(serverUrl).send(backend).map(_.body).absolve
+  val request = Api.createRequest(ApiSchema.Queries.test)
 
   def run = for
     _ <- Console.printLine("Hello caliban client!")
-    test <- result
+    test <- request
     _ <- Console.printLine(test)
+    test <- request
+    _ <- Console.printLine(test)
+    - <- Console.printLine("Goodbye caliban client!")
   yield ()

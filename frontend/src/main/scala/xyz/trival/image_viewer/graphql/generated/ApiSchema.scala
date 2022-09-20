@@ -3,7 +3,7 @@ package xyz.trival.image_viewer.graphql.generated
 import caliban.client.FieldBuilder._
 import caliban.client._
 
-object ApiClient {
+object ApiSchema {
 
   type Queries = _root_.caliban.client.Operations.RootQuery
   object Queries {

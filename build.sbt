@@ -22,7 +22,7 @@ lazy val backend = project
       Seq(
         "xyz.trival.image_viewer.graphql.GraphQLApi.api" -> ClientGenerationSettings(
           packageName = "xyz.trival.image_viewer.graphql.generated",
-          clientName = "ApiClient"
+          clientName = "ApiSchema"
         )
       )
   )
