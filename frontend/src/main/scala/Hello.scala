@@ -1,12 +1,12 @@
 package test_scalajs
 
-import xyz.trival.image_viewer.graphql.generated.ApiSchema
-import xyz.trival.image_viewer.graphql.Api
+import xyz.trival.image_viewer.graphql.generated.ApiSchema.Queries
+import xyz.trival.image_viewer.graphql.GraphqlApi
 import zio.*
 
 object Hello extends ZIOAppDefault:
 
-  val request = Api.createRequest(ApiSchema.Queries.test)
+  val request = GraphqlApi.createRequest(Queries.test)
 
   def run = for
     _ <- Console.printLine("Hello caliban client!")

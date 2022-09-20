@@ -5,7 +5,7 @@ import sttp.client3.impl.zio.FetchZioBackend
 import caliban.client.SelectionBuilder
 import caliban.client.Operations.RootQuery
 
-object Api:
+object GraphqlApi:
 
   val backend = FetchZioBackend()
   val serverUrl = uri"http://localhost:8088/api/graphql"
