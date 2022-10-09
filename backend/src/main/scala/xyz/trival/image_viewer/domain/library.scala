@@ -1,6 +1,9 @@
-package xyz.trival.image_viewer.domain.entities
+package xyz.trival.image_viewer.domain.library
+
+import xyz.trival.image_viewer.domain.media.Media
 
 import java.util.UUID
+import scala.util.hashing.MurmurHash3
 
 case class Library(
     id: UUID,
@@ -15,23 +18,7 @@ case class Library(
 case class LibraryInfo(
     id: UUID,
     name: String,
-    rootPath: String,
-)
-
-enum MediaType:
-  case Image, Video
-
-case class Media(
-    // TODO: Hash directory and filename as id
-    id: String,
-    directory: String,
-    filename: String,
-    mediaType: MediaType,
-    size: Int,
-    width: Int,
-    height: Int,
-    date: Option[Int],
-    length: Option[Int]
+    rootPath: String
 )
 
 case class Tag(

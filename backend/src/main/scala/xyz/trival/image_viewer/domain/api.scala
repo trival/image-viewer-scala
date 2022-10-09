@@ -1,4 +1,6 @@
-import xyz.trival.image_viewer.domain.entities.{Library, LibraryInfo, MediaTag, Tag}
+package xyz.trival.image_viewer.domain.api
+
+import xyz.trival.image_viewer.domain.library.{Library, LibraryInfo, MediaTag, Tag}
 import zio.Task
 
 import java.util.UUID
@@ -15,7 +17,6 @@ trait API:
       ignorePaths: Option[Set[String]]
   ): Task[Library]
   def deleteLibrary(id: UUID): Task[Unit]
-  // TODO: convert to progress stream if possible
   def reloadLibraryMedia(libraryId: UUID): Task[Library]
   def reloadLibraryMediaPath(libraryId: UUID, path: String): Task[Library]
 
