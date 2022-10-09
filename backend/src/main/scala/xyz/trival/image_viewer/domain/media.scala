@@ -30,13 +30,15 @@ case class Media(
     val c = this.directory.compare(that.directory)
     if c == 0 then this.filename.compare(that.filename) else c
 
-  val id: String = hashCode.toString + idSuffix.toString
+  val id: String =
+    hashCode.toString + (if idSuffix > 0 then "_" + idSuffix.toString else "")
 
 object Media:
-  val imageExtensions = Set("jpg", "jpeg", "png", "gif", "bmp", "webp", "heic")
-  val videoExtensions = Set(
-    "mp4",
-    "webm",
+  val webImageExtensions =
+    Set("jpg", "jpeg", "png", "gif", "webp", "avif", "svg")
+  val imageExtensions = webImageExtensions ++ Set("bmp", "heic", "tiff", "raw")
+  val webVideoExtensions = Set("webm", "mp4")
+  val videoExtensions = webVideoExtensions ++ Set(
     "mkv",
     "avi",
     "mov",
