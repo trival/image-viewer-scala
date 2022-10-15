@@ -21,6 +21,10 @@ case class LibraryInfo(
     rootPath: String
 )
 
+given Conversion[Library, LibraryInfo] with
+  def apply(lib: Library): LibraryInfo =
+    LibraryInfo(lib.id, lib.name, lib.rootPath)
+
 case class Tag(
     id: UUID,
     name: String,

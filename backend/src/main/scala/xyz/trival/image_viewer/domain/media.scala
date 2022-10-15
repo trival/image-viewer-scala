@@ -31,7 +31,12 @@ case class Media(
     if c == 0 then this.filename.compare(that.filename) else c
 
   val id: String =
-    hashCode.toString + (if idSuffix > 0 then "_" + idSuffix.toString else "")
+    val hex = hashCode.toHexString
+    if idSuffix > 0
+    then hex + "_" + idSuffix.toHexString
+    else hex
+
+end Media
 
 object Media:
   val webImageExtensions =
@@ -71,16 +76,34 @@ object Media:
   )
   val mediaExtensions = imageExtensions ++ videoExtensions
 
-  def collectInRootPath(rootPath: String): Seq[Media] =
-    val root = os.Path(rootPath)
+  def collectInRootPath(rootPath: os.Path): Seq[Media] =
     val files = os
-      .walk(root)
+      .walk(rootPath)
       .filter(file =>
         os.isFile(file) && mediaExtensions.contains(file.ext.toLowerCase)
       )
-    files.map { file =>
-      val relativePath = file.relativeTo(root).toString
+    val media = files.map(file =>
+      val relativePath = file.relativeTo(rootPath).toString
       val (directory, filename) =
         relativePath.splitAt(relativePath.lastIndexOf('/'))
-      Media(directory, filename, MediaType.Image)
-    }
+      val mediaType =
+        if imageExtensions.contains(file.ext.toLowerCase) then MediaType.Image
+        else if videoExtensions.contains(file.ext.toLowerCase) then
+          MediaType.Video
+        else throw new Exception("Unknown media type")
+      Media(directory, filename.replace("/", ""), mediaType)
+    )
+    createDestinctIds(media).sorted
+
+  def collectInRootPath(rootPath: String): Seq[Media] =
+    collectInRootPath(os.Path(rootPath))
+
+  def createDestinctIds(media: Seq[Media]): Seq[Media] =
+    val grouped = media.groupBy(m => m.hashCode)
+    grouped.values.flatMap { ms =>
+      if ms.length == 1 then ms
+      else
+        ms.zipWithIndex.map { case (m, i) =>
+          m.copy(idSuffix = i)
+        }
+    }.toSeq
