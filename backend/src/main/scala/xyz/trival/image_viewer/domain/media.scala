@@ -2,24 +2,38 @@ package xyz.trival.image_viewer.domain.media
 
 import java.util.UUID
 import scala.util.hashing.MurmurHash3
+import zio.json.JsonDecoder
+import zio.json.DeriveJsonDecoder
+import zio.json.JsonEncoder
+import zio.json.DeriveJsonEncoder
 
 enum MediaType:
   case Image, Video
 
+object MediaType:
+  given JsonDecoder[MediaType] = DeriveJsonDecoder.gen[MediaType]
+  given JsonEncoder[MediaType] = DeriveJsonEncoder.gen[MediaType]
+
 case class Media(
     directory: String,
     filename: String,
-    mediaType: MediaType,
-    size: Int = 0,
+    /** size in bytes */
+    size: Long = 0,
+    /** width in pixels */
     width: Int = 0,
+    /** height in pixels */
     height: Int = 0,
-    date: Option[Int] = None,
+    /** Optional creation date */
+    date: Option[Long] = None,
+    /** Optional video length in seconds */
     length: Option[Int] = None,
-    idSuffix: Int = 0
+    idSuffix: Int = 0,
 ) extends Ordered[Media]:
 
   override def hashCode: Int =
-    MurmurHash3.stringHash(directory + ':' + filename)
+    MurmurHash3.stringHash(
+      directory + ':' + filename + ':' + size + ':' + width + ':' + height,
+    )
 
   override def equals(other: Any): Boolean = other match
     case that: Media =>
@@ -30,11 +44,22 @@ case class Media(
     val c = this.directory.compare(that.directory)
     if c == 0 then this.filename.compare(that.filename) else c
 
-  val id: String =
+  val id =
     val hex = hashCode.toHexString
     if idSuffix > 0
     then hex + "_" + idSuffix.toHexString
     else hex
+
+  val mediaType =
+    // extract file extension from filename
+    val ext =
+      filename
+        .substring(filename.lastIndexOf(".") + 1, filename.length)
+        .toLowerCase
+
+    if Media.imageExtensions.contains(ext) then MediaType.Image
+    else if Media.videoExtensions.contains(ext) then MediaType.Video
+    else throw new Exception("Unknown media type")
 
 end Media
 
@@ -72,7 +97,7 @@ object Media:
     "f4v",
     "f4p",
     "f4a",
-    "f4b"
+    "f4b",
   )
   val mediaExtensions = imageExtensions ++ videoExtensions
 
@@ -80,18 +105,13 @@ object Media:
     val files = os
       .walk(rootPath)
       .filter(file =>
-        os.isFile(file) && mediaExtensions.contains(file.ext.toLowerCase)
+        os.isFile(file) && mediaExtensions.contains(file.ext.toLowerCase),
       )
     val media = files.map(file =>
       val relativePath = file.relativeTo(rootPath).toString
       val (directory, filename) =
         relativePath.splitAt(relativePath.lastIndexOf('/'))
-      val mediaType =
-        if imageExtensions.contains(file.ext.toLowerCase) then MediaType.Image
-        else if videoExtensions.contains(file.ext.toLowerCase) then
-          MediaType.Video
-        else throw new Exception("Unknown media type")
-      Media(directory, filename.replace("/", ""), mediaType)
+      Media(directory, filename.replace("/", "")),
     )
     createDestinctIds(media).sorted
 
@@ -107,3 +127,6 @@ object Media:
           m.copy(idSuffix = i)
         }
     }.toSeq
+
+  given JsonDecoder[Media] = DeriveJsonDecoder.gen[Media]
+  given JsonEncoder[Media] = DeriveJsonEncoder.gen[Media]

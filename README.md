@@ -22,4 +22,6 @@ So far the only way to trigger compilation is to change build.sbt, then compile 
 
 ## TODOS
 
-* [ ] Try DB Schema definition with [liquibase](https://www.liquibase.com/blog/3-ways-to-run-liquibase)
+- use json files as config persistence
+- compile imagemagick with heic, avif and jxl (jpeg xl) support (see https://eplt.medium.com/5-minutes-to-install-imagemagick-with-heic-support-on-ubuntu-18-04-digitalocean-fe2d09dcef1 for guidance)
+- read filesize and dimensions by imagemagick

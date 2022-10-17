@@ -12,6 +12,7 @@ lazy val backend = project
   .settings(
     libraryDependencies ++= Seq(
       "dev.zio" %% "zio" % zioVersion,
+      "dev.zio" %% "zio-json" % "0.3.0",
       "io.d11" %% "zhttp" % "2.0.0-RC10",
       "com.github.ghostdogpr" %% "caliban" % calibanVersion,
       "com.github.ghostdogpr" %% "caliban-zio-http" % calibanVersion,
