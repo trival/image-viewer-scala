@@ -11,12 +11,18 @@ import javax.activation.MimeType
 object MediaTests extends TestSuite:
   val tests = Tests {
     test("collectInRootPath") {
-      val ms = Media.collectInRootPath(os.pwd / "test-lib-1")
+      val ms = Media.collectInRootPath(os.pwd / "test-lib-1", List())
       for m <- ms do println(m)
       assert(ms.length > 1)
 
       val ms2 = Media.collectInRootPath((os.pwd / "test-lib-1").toString)
       assert(ms == ms2)
+
+      val ms3 =
+        Media.collectInRootPath((os.pwd / "test-lib-1").toString, List("test2"))
+
+      assert(ms3.length < ms.length)
+      ms3.length ==> ms.length - 6
     }
 
     test("json") {

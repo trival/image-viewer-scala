@@ -1,18 +1,12 @@
 package xyz.trival.image_viewer.domain.media
 
+import zio.json.{DeriveJsonDecoder, DeriveJsonEncoder, JsonDecoder, JsonEncoder}
+
 import java.util.UUID
 import scala.util.hashing.MurmurHash3
-import zio.json.JsonDecoder
-import zio.json.DeriveJsonDecoder
-import zio.json.JsonEncoder
-import zio.json.DeriveJsonEncoder
 
 enum MediaType:
   case Image, Video
-
-object MediaType:
-  given JsonDecoder[MediaType] = DeriveJsonDecoder.gen[MediaType]
-  given JsonEncoder[MediaType] = DeriveJsonEncoder.gen[MediaType]
 
 case class Media(
     directory: String,
@@ -101,11 +95,16 @@ object Media:
   )
   val mediaExtensions = imageExtensions ++ videoExtensions
 
-  def collectInRootPath(rootPath: os.Path): Seq[Media] =
+  def collectInRootPath(
+      rootPath: os.Path,
+      ignorePaths: List[os.Path],
+  ): Seq[Media] =
     val files = os
       .walk(rootPath)
       .filter(file =>
-        os.isFile(file) && mediaExtensions.contains(file.ext.toLowerCase),
+        os.isFile(file)
+          && ignorePaths.forall(ignorePath => !file.startsWith(ignorePath))
+          && mediaExtensions.contains(file.ext.toLowerCase),
       )
     val media = files.map(file =>
       val relativePath = file.relativeTo(rootPath).toString
@@ -115,8 +114,12 @@ object Media:
     )
     createDestinctIds(media).sorted
 
-  def collectInRootPath(rootPath: String): Seq[Media] =
-    collectInRootPath(os.Path(rootPath))
+  def collectInRootPath(
+      rootPath: String,
+      ignorePaths: List[String] = List(),
+  ): Seq[Media] =
+    val path = os.Path(rootPath)
+    collectInRootPath(path, ignorePaths.map(path / _))
 
   def createDestinctIds(media: Seq[Media]): Seq[Media] =
     val grouped = media.groupBy(m => m.hashCode)
