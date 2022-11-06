@@ -1,7 +1,7 @@
-package xyz.trival.image_viewer.domain.library
+package xyz.trival.image_viewer.modules.library.model
 
-import xyz.trival.image_viewer.domain.media.Media
-
+import xyz.trival.image_viewer.modules.media.model.Media
+import xyz.trival.image_viewer.modules.tag.model.{Tag, MediaTag}
 import java.util.UUID
 import scala.util.hashing.MurmurHash3
 
@@ -12,26 +12,15 @@ case class Library(
     ignorePaths: Set[String],
     media: Set[Media],
     tags: Set[Tag],
-    MediaTags: Set[MediaTag]
+    MediaTags: Set[MediaTag],
 )
 
 case class LibraryInfo(
     id: UUID,
     name: String,
-    rootPath: String
+    rootPath: String,
 )
 
 given Conversion[Library, LibraryInfo] with
   def apply(lib: Library): LibraryInfo =
     LibraryInfo(lib.id, lib.name, lib.rootPath)
-
-case class Tag(
-    id: UUID,
-    name: String,
-    color: Option[String] = None
-)
-
-case class MediaTag(
-    tagId: UUID,
-    media: String
-)
