@@ -8,7 +8,7 @@ case class Tag(
     color: Option[String] = None,
 )
 
-case class MediaTag(
+case class TagMediaLink(
     tagId: UUID,
     media: String,
 )

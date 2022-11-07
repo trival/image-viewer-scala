@@ -1,9 +1,14 @@
 package xyz.trival.image_viewer.modules.tag.service
 
 import zio.Task
-import xyz.trival.image_viewer.modules.tag.model.{Tag, MediaTag}
-
+import xyz.trival.image_viewer.modules.tag.model.{Tag, TagMediaLink}
 import java.util.UUID
+
+enum TagServiceError:
+  case TagNotFound(id: UUID)
+  case MediaNotFound(media: String)
+  case TagMediaLinkNotFound(tagId: UUID, media: String)
+  case EnexpecectedError(err: Throwable)
 
 trait TagService:
   def createTag(name: String, color: Option[String]): Task[Tag]
@@ -15,5 +20,6 @@ trait TagService:
   ): Task[Tag]
   def deleteTag(id: UUID): Task[Unit]
 
-  def addMediaTag(media: String, tagId: UUID): Task[MediaTag]
-  def removeMediaTag(media: String, tagId: UUID): Task[Unit]
+  def addMediaLink(media: String, tagId: UUID): Task[TagMediaLink]
+  def removeMediaLink(media: String, tagId: UUID): Task[Unit]
+  def removeAllMediaLinks(media: String): Task[Unit]

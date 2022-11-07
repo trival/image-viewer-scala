@@ -1,7 +1,7 @@
 package xyz.trival.image_viewer.modules.library.model
 
 import xyz.trival.image_viewer.modules.media.model.Media
-import xyz.trival.image_viewer.modules.tag.model.{Tag, MediaTag}
+import xyz.trival.image_viewer.modules.tag.model.{Tag, TagMediaLink}
 import java.util.UUID
 import scala.util.hashing.MurmurHash3
 
@@ -12,7 +12,7 @@ case class Library(
     ignorePaths: Set[String],
     media: Set[Media],
     tags: Set[Tag],
-    MediaTags: Set[MediaTag],
+    MediaTags: Set[TagMediaLink],
 )
 
 case class LibraryInfo(
