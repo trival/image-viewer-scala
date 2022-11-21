@@ -1,19 +1,30 @@
 package xyz.trival.image_viewer.modules.library.service
 
-import xyz.trival.image_viewer.modules.library.model.{Library, LibraryInfo}
-import zio.Task
-
+import xyz.trival.image_viewer.modules.library.model.{Library}
+import zio.*
 import java.util.UUID
+import xyz.trival.image_viewer.modules.library.service.LibraryErrors.LibraryNotFound
+
+object LibraryErrors:
+  case class LibraryNotFound(id: UUID)
 
 trait LibraryService:
-  def getLibraries: Task[List[LibraryInfo]]
-  def getLibrary(id: UUID): Task[Option[Library]]
+  def getLibraries: UIO[List[Library]]
 
-  def createLibrary(name: String, rootPath: String): Task[Library]
+  def getLibrary(
+      id: UUID,
+  ): IO[LibraryNotFound, Library]
+
+  def createLibrary(
+      name: String,
+      rootPath: String,
+  ): UIO[Library]
+
   def updateLibrary(
       id: UUID,
       name: Option[String],
       rootPath: Option[String],
       ignorePaths: Option[Set[String]],
-  ): Task[Library]
-  def deleteLibrary(id: UUID): Task[Unit]
+  ): IO[LibraryNotFound, Library]
+
+  def deleteLibrary(id: UUID): IO[LibraryNotFound, Unit]

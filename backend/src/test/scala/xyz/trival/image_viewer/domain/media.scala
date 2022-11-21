@@ -1,4 +1,4 @@
-package xyz.trival.image_viewer.domain.media
+package xyz.trival.image_viewer.modules.media.model
 
 import utest.*
 import java.util.Date

@@ -10,17 +10,4 @@ case class Library(
     name: String,
     rootPath: String,
     ignorePaths: Set[String],
-    media: Set[Media],
-    tags: Set[Tag],
-    MediaTags: Set[TagMediaLink],
 )
-
-case class LibraryInfo(
-    id: UUID,
-    name: String,
-    rootPath: String,
-)
-
-given Conversion[Library, LibraryInfo] with
-  def apply(lib: Library): LibraryInfo =
-    LibraryInfo(lib.id, lib.name, lib.rootPath)

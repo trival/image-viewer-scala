@@ -24,20 +24,6 @@ case class Media(
     idSuffix: Int = 0,
 ) extends Ordered[Media]:
 
-  override def hashCode: Int =
-    MurmurHash3.stringHash(
-      directory + ':' + filename + ':' + size + ':' + width + ':' + height,
-    )
-
-  override def equals(other: Any): Boolean = other match
-    case that: Media =>
-      this.directory == that.directory && this.filename == that.filename
-    case _ => false
-
-  override def compare(that: Media): Int =
-    val c = this.directory.compare(that.directory)
-    if c == 0 then this.filename.compare(that.filename) else c
-
   val id =
     val hex = hashCode.toHexString
     if idSuffix > 0
@@ -54,6 +40,20 @@ case class Media(
     if Media.imageExtensions.contains(ext) then MediaType.Image
     else if Media.videoExtensions.contains(ext) then MediaType.Video
     else throw new Exception("Unknown media type")
+
+  override def hashCode: Int =
+    MurmurHash3.stringHash(
+      directory + ':' + filename + ':' + size + ':' + width + ':' + height,
+    )
+
+  override def equals(other: Any): Boolean = other match
+    case that: Media =>
+      this.id == that.id
+    case _ => false
+
+  override def compare(that: Media): Int =
+    val c = this.directory.compare(that.directory)
+    if c == 0 then this.filename.compare(that.filename) else c
 
 end Media
 
