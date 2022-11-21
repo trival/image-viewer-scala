@@ -1,6 +1,6 @@
-val scalaVer = "3.2.0"
+val scalaVer = "3.2.1"
 
-val zioVersion = "2.0.2"
+val zioVersion = "2.0.4"
 val calibanVersion = "2.0.1"
 
 ThisBuild / scalaVersion := scalaVer
@@ -17,19 +17,25 @@ lazy val backend = project
       "com.github.ghostdogpr" %% "caliban" % calibanVersion,
       "com.github.ghostdogpr" %% "caliban-zio-http" % calibanVersion,
       "com.lihaoyi" %% "os-lib" % "0.8.1",
-      "com.lihaoyi" %% "utest" % "0.8.1" % "test"
-    )
+      "com.lihaoyi" %% "utest" % "0.8.1" % Test,
+      "dev.zio" %% "zio-test" % zioVersion % Test,
+      "dev.zio" %% "zio-test-sbt" % zioVersion % Test,
+      "dev.zio" %% "zio-test-magnolia" % zioVersion % Test,
+    ),
   )
   .settings(
     Compile / ctCalibanServer / ctCalibanServerSettings ++=
       Seq(
         "xyz.trival.image_viewer.graphql.GraphQLApi.api" -> ClientGenerationSettings(
           packageName = "xyz.trival.image_viewer.graphql.generated",
-          clientName = "ApiSchema"
-        )
-      )
+          clientName = "ApiSchema",
+        ),
+      ),
   )
   .settings(testFrameworks += new TestFramework("utest.runner.Framework"))
+  .settings(
+    testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework"),
+  )
 
 lazy val frontend = project
   .in(file("frontend"))
@@ -41,11 +47,11 @@ lazy val frontend = project
       "com.softwaremill.sttp.client3" %%% "core" % "3.8.0",
       "com.softwaremill.sttp.client3" %%% "zio" % "3.8.0",
       "com.github.ghostdogpr" %%% "caliban-client" % calibanVersion,
-      "com.lihaoyi" %%% "utest" % "0.8.1" % "test"
-    )
+      "com.lihaoyi" %%% "utest" % "0.8.1" % "test",
+    ),
   )
   .settings(scalaJSUseMainModuleInitializer := true)
   .settings(
-    Compile / ctCalibanClient / ctCalibanClientsSettings := Seq(backend)
+    Compile / ctCalibanClient / ctCalibanClientsSettings := Seq(backend),
   )
   .settings(testFrameworks += new TestFramework("utest.runner.Framework"))

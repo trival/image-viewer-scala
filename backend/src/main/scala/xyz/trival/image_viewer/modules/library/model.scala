@@ -11,3 +11,27 @@ case class Library(
     rootPath: String,
     ignorePaths: Set[String],
 )
+
+object Library:
+  def apply(
+      name: String,
+      rootPath: String,
+  ): Library =
+    Library(
+      id = UUID.randomUUID(),
+      name,
+      rootPath,
+      ignorePaths = Set.empty,
+    )
+
+  def apply(
+      name: String,
+      rootPath: String,
+      ignorePaths: Set[String],
+  ): Library =
+    Library(
+      id = UUID.randomUUID(),
+      name,
+      rootPath,
+      ignorePaths,
+    )
