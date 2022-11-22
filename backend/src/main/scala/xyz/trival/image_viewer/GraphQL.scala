@@ -3,25 +3,33 @@ package xyz.trival.image_viewer.graphql
 import caliban.RootResolver
 import caliban.GraphQL.graphQL
 import caliban.schema.Annotations.GQLDescription
+import zio.*
+import xyz.trival.image_viewer.modules.library.model.Library
+import xyz.trival.image_viewer.modules.library.service.LibraryService
 
 // root schema definition
 object Operations:
 
   case class Queries(
       @GQLDescription("test query")
-      test: () => String
+      test: () => UIO[String],
+      getLibraries: () => URIO[LibraryService, Seq[Library]],
   )
 
   case class Mutations()
 
 end Operations
 
+type GqlEnv = LibraryService
+
 // graphQL schema implementation
 object Resolver:
 
   val queries = Operations.Queries(
     test = () =>
-      "test query result, hello caliban graphql! " + System.currentTimeMillis()
+      Clock.nanoTime
+        .map("test query result, hello caliban graphql! " + _.toString),
+    getLibraries = () => LibraryService.getLibraries,
   )
 
   val mutations = Operations.Mutations()
@@ -32,6 +40,6 @@ end Resolver
 
 // api export
 object GraphQLApi:
-  val api = graphQL(
-    Resolver.root
+  val api = graphQL[GqlEnv, Operations.Queries, Unit, Unit](
+    Resolver.root,
   )

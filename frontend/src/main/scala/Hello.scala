@@ -10,9 +10,9 @@ object Hello extends ZIOAppDefault:
 
   def run = for
     _ <- Console.printLine("Hello caliban client!")
-    test <- request
-    _ <- Console.printLine(test)
-    test <- request
-    _ <- Console.printLine(test)
+    test1 <- request
+    _ <- Console.printLine(test1)
+    test2 <- request
+    _ <- Console.printLine(test2)
     _ <- Console.printLine("Goodbye caliban client!")
   yield ()

@@ -26,6 +26,31 @@ trait LibraryService:
 
   def deleteLibrary(id: UUID): IO[LibraryNotFound, Unit]
 
+object LibraryService:
+  def getLibraries =
+    ZIO.serviceWithZIO[LibraryService](_.getLibraries)
+
+  def createLibrary(
+      name: String,
+      rootPath: String,
+  ) =
+    ZIO.serviceWithZIO[LibraryService](_.createLibrary(name, rootPath))
+
+  def updateLibrary(
+      id: UUID,
+      name: Option[String],
+      rootPath: Option[String],
+      ignorePaths: Option[Set[String]],
+  ) =
+    ZIO.serviceWithZIO[LibraryService](
+      _.updateLibrary(id, name, rootPath, ignorePaths),
+    )
+
+  def deleteLibrary(id: UUID) =
+    ZIO.serviceWithZIO[LibraryService](_.deleteLibrary(id))
+
+// Implementation
+
 case class LibraryServiceImpl(
     store: LibraryStorage,
 ) extends LibraryService:
