@@ -7,7 +7,8 @@ import zio.*
 import xyz.trival.image_viewer.modules.library.model.Library
 import xyz.trival.image_viewer.modules.library.service.LibraryService
 
-// root schema definition
+// === Root schema definition ===
+
 object Operations:
 
   case class Queries(
@@ -20,9 +21,8 @@ object Operations:
 
 end Operations
 
-type GqlEnv = LibraryService
+// === GraphQL schema implementation ===
 
-// graphQL schema implementation
 object Resolver:
 
   val queries = Operations.Queries(
@@ -38,7 +38,10 @@ object Resolver:
 
 end Resolver
 
-// api export
+// === Api export ===
+
+type GqlEnv = LibraryService
+
 object GraphQLApi:
   val api = graphQL[GqlEnv, Operations.Queries, Unit, Unit](
     Resolver.root,
