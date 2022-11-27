@@ -6,7 +6,6 @@ import zio.json.EncoderOps
 import java.text.DateFormat
 import java.util.Calendar
 import java.util.GregorianCalendar
-import javax.activation.MimeType
 
 object MediaTests extends TestSuite:
   val tests = Tests {
