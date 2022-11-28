@@ -13,22 +13,23 @@ import zhttp.http.middleware.Cors.CorsConfig
 
 object MainApp extends ZIOAppDefault:
 
-  private val graphiql = Http.fromStream(ZStream.fromResource("graphiql.html"))
+  val graphiql = Http.fromStream(ZStream.fromResource("graphiql.html"))
+
+  val corsCfg: CorsConfig =
+    CorsConfig(
+      anyOrigin = true,
+      anyMethod = true,
+    )
 
   override def run =
     GraphQLApi.api.interpreter
       .flatMap(interpreter => {
-        val config: CorsConfig =
-          CorsConfig(
-            anyOrigin = true,
-            anyMethod = true,
-          )
 
         val httpApp = Http.collectHttp[Request] {
           case _ -> !! / "graphql" =>
             ZHttpAdapter.makeHttpService(interpreter)
           case _ -> !! / "graphiql" => graphiql
-        } @@ Middleware.cors(config)
+        } @@ Middleware.cors(corsCfg)
 
         Server
           .start(
