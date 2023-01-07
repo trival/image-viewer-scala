@@ -1,7 +1,7 @@
 val scalaVer = "3.2.1"
 
-val zioVersion = "2.0.4"
-val calibanVersion = "2.0.1"
+val zioVersion = "2.0.5"
+val calibanVersion = "2.0.2"
 
 ThisBuild / scalaVersion := scalaVer
 ThisBuild / organization := "trival.xyz"

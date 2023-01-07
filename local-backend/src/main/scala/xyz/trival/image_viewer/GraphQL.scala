@@ -6,6 +6,8 @@ import caliban.schema.Annotations.GQLDescription
 import zio.*
 import xyz.trival.image_viewer.modules.library.model.Library
 import xyz.trival.image_viewer.modules.library.service.LibraryService
+import xyz.trival.image_viewer.modules.library.service.LibraryErrors.LibraryNotFound
+import java.util.UUID
 
 // === Root schema definition ===
 
@@ -17,7 +19,36 @@ object Operations:
       getLibraries: () => URIO[LibraryService, Seq[Library]],
   )
 
-  case class Mutations()
+  // Mutations
+
+  case class CreateLibraryArgs(
+      name: String,
+      rootPath: String,
+  )
+
+  case class UpdateLibraryArgs(
+      id: String,
+      name: Option[String],
+      rootPath: Option[String],
+      ignorePaths: Option[Set[String]],
+  )
+
+  case class DeleteLibraryArgs(
+      id: String,
+  )
+
+  case class Mutations(
+      createLibrary: CreateLibraryArgs => URIO[LibraryService, Library],
+      updateLibrary: UpdateLibraryArgs => ZIO[
+        LibraryService,
+        LibraryNotFound,
+        Library,
+      ],
+      deleteLibrary: DeleteLibraryArgs => URIO[
+        LibraryService,
+        Boolean,
+      ],
+  )
 
 end Operations
 
@@ -32,9 +63,25 @@ object Resolver:
     getLibraries = () => LibraryService.getLibraries,
   )
 
-  val mutations = Operations.Mutations()
+  val mutations = Operations.Mutations(
+    createLibrary =
+      args => LibraryService.createLibrary(args.name, args.rootPath),
+    updateLibrary = args =>
+      LibraryService
+        .updateLibrary(
+          UUID.fromString(args.id),
+          args.name,
+          args.rootPath,
+          args.ignorePaths,
+        ),
+    deleteLibrary = args =>
+      LibraryService
+        .deleteLibrary(UUID.fromString(args.id))
+        .as(true)
+        .orElseSucceed(false),
+  )
 
-  val root = RootResolver(queries)
+  val root = RootResolver(queries, mutations)
 
 end Resolver
 
@@ -43,6 +90,6 @@ end Resolver
 type GqlEnv = LibraryService
 
 object GraphQLApi:
-  val api = graphQL[GqlEnv, Operations.Queries, Unit, Unit](
+  val api = graphQL[GqlEnv, Operations.Queries, Operations.Mutations, Unit](
     Resolver.root,
   )

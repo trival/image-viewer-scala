@@ -7,7 +7,7 @@ import xyz.trival.image_viewer.modules.library.service.LibraryErrors.LibraryNotF
 import xyz.trival.image_viewer.modules.library.persistence.LibraryStorage
 
 object LibraryErrors:
-  case class LibraryNotFound(id: UUID)
+  case class LibraryNotFound(id: UUID) extends Exception
 
 trait LibraryService:
   def getLibraries: UIO[Seq[Library]]
