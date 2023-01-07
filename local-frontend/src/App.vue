@@ -1,9 +1,9 @@
 <template>
 	<main>
-		<FirstComponent />
+		<MainFrame />
 	</main>
 </template>
 
 <script setup lang="ts">
-import FirstComponent from './components/FirstComponent.vue'
+import MainFrame from './components/MainFrame.vue'
 </script>
