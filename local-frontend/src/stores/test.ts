@@ -11,5 +11,7 @@ export const useTestStore = defineStore('testApi', () => {
 		test.value = apiResult.test
 	}
 
+	refreshTest().catch(console.error)
+
 	return { test, refreshTest }
 })
