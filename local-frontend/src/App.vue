@@ -1,9 +1,9 @@
 <template>
 	<main>
-		<MainFrame />
+		<GalleryView />
 	</main>
 </template>
 
 <script setup lang="ts">
-import MainFrame from './components/MainFrame.vue'
+import GalleryView from './components/GalleryView.vue'
 </script>
