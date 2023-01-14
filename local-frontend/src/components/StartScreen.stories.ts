@@ -30,3 +30,9 @@ export const Default = {
 		],
 	},
 }
+
+export const Empty = {
+	args: {
+		libraries: [],
+	},
+}
