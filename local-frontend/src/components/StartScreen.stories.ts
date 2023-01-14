@@ -6,6 +6,7 @@ export default {
 		onSelect: { action: 'onSelect' },
 		onCreate: { action: 'onCreate' },
 	},
+	parameters: { layout: 'fullscreen' },
 }
 
 export const Default = {
