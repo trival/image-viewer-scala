@@ -44,8 +44,11 @@ export const useLibraryStore = defineStore('library', () => {
 	}
 
 	async function createLibrary(name: string, rootPath: string) {
-		await api.CreateLibrary({ name, rootPath })
-		return refreshLibraries()
+		const result = await api.CreateLibrary({ name, rootPath })
+		await refreshLibraries()
+		if (result.createLibrary.id) {
+			setCurrentLibrary(result.createLibrary.id)
+		}
 	}
 
 	async function updateLibrary(library: LibraryInput) {

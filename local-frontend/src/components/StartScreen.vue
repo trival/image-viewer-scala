@@ -6,18 +6,18 @@
 				role="list"
 				class="mt-6 divide-y divide-gray-200 border-t border-b border-gray-200"
 			>
-				<li v-for="item in libraries" :key="item.id">
+				<li v-for="library in libraries" :key="library.id">
 					<div
 						class="group relative flex items-start space-x-3 py-4 bg-white hover:bg-slate-50"
 					>
 						<div class="min-w-0 flex-1">
 							<div class="text-sm font-medium">
-								<button @click="onSelect(item.id)">
+								<button @click="onSelect(library.id)">
 									<span class="absolute inset-0" aria-hidden="true" />
-									{{ item.name }}
+									{{ library.name }}
 								</button>
 							</div>
-							<p class="text-sm text-gray-500">{{ item.rootPath }}</p>
+							<p class="text-sm text-gray-500">{{ library.rootPath }}</p>
 						</div>
 						<div class="flex-shrink-0 self-center">
 							<ChevronRightIcon
@@ -157,15 +157,10 @@ import {
 } from '@headlessui/vue'
 import { Form, Field, ErrorMessage } from 'vee-validate'
 import * as yup from 'yup'
-
-export interface Library {
-	id: string
-	name: string
-	rootPath: string
-}
+import type { LibraryBaseData } from '@/lib/layout-types'
 
 export interface Props {
-	libraries: Library[]
+	libraries: LibraryBaseData[]
 	onSelect: (libraryId: string) => void
 	onCreate: (name: string, rootPath: string) => void
 }

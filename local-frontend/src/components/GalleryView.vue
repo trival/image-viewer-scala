@@ -51,12 +51,11 @@
 									</button>
 								</div>
 							</TransitionChild>
-							<div class="h-0 flex-1 overflow-y-auto pt-5 pb-4">
-								<nav class="mt-5 space-y-1 px-2">TODO: Fill navigation</nav>
-							</div>
-							<div class="flex flex-shrink-0 border-t border-gray-200 p-4">
-								Footer
-							</div>
+							<GallerySidebar
+								:library="library"
+								:on-settings-click="onSettingsClick"
+								:on-exit-click="onCloseLibrary"
+							/>
 						</DialogPanel>
 					</TransitionChild>
 					<div class="w-14 flex-shrink-0">
@@ -67,22 +66,15 @@
 		</TransitionRoot>
 
 		<!-- Static sidebar for desktop -->
-		<div class="hidden md:fixed md:inset-y-0 md:flex md:w-64 md:flex-col">
+		<div class="hidden md:fixed md:inset-y-0 md:flex md:w-72 md:flex-col">
 			<!-- Sidebar component, swap this element with another sidebar if you like -->
-			<div
-				class="flex min-h-0 flex-1 flex-col border-r border-gray-200 bg-white"
-			>
-				<div class="flex flex-1 flex-col overflow-y-auto pt-5 pb-4">
-					<nav class="mt-5 flex-1 space-y-1 bg-white px-2">
-						TODO: Fill navigation
-					</nav>
-				</div>
-				<div class="flex flex-shrink-0 border-t border-gray-200 p-4">
-					Footer
-				</div>
-			</div>
+			<GallerySidebar
+				:library="library"
+				:on-settings-click="onSettingsClick"
+				:on-exit-click="onCloseLibrary"
+			/>
 		</div>
-		<div class="flex flex-1 flex-col md:pl-64">
+		<div class="flex flex-1 flex-col md:pl-72">
 			<div class="sticky top-0 z-10 pl-1 pt-1 sm:pl-3 sm:pt-3 md:hidden">
 				<button
 					type="button"
@@ -115,6 +107,20 @@ import {
 	TransitionRoot,
 } from '@headlessui/vue'
 import { Bars3Icon, XMarkIcon } from '@heroicons/vue/24/outline'
+import GallerySidebar from './GallerySidebar.vue'
+import type { LibraryBaseData } from '@/lib/layout-types'
+
+export interface Props {
+	library: LibraryBaseData
+	onCloseLibrary: () => void
+}
+
+defineProps<Props>()
 
 const sidebarOpen = ref(false)
+const settingsOpen = ref(false)
+
+function onSettingsClick() {
+	settingsOpen.value = true
+}
 </script>

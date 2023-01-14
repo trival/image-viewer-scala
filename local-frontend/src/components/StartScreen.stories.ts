@@ -1,7 +1,7 @@
-import StartScreenLayout from './StartScreenLayout.vue'
+import StartScreen from './StartScreen.vue'
 
 export default {
-	component: StartScreenLayout,
+	component: StartScreen,
 	argTypes: {
 		onSelect: { action: 'onSelect' },
 		onCreate: { action: 'onCreate' },
