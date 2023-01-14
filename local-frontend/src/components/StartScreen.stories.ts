@@ -3,8 +3,8 @@ import StartScreenLayout from './StartScreenLayout.vue'
 export default {
 	component: StartScreenLayout,
 	argTypes: {
-		onSelect: { action: 'selected' },
-		onCreate: { action: 'created' },
+		onSelect: { action: 'onSelect' },
+		onCreate: { action: 'onCreate' },
 	},
 }
 
