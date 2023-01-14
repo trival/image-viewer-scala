@@ -1,27 +1,30 @@
-import StartView from './StartView.vue'
+import StartScreenLayout from './StartScreenLayout.vue'
 
 export default {
-	component: StartView,
-	argTypes: { onSelect: { action: 'selected' } },
+	component: StartScreenLayout,
+	argTypes: {
+		onSelect: { action: 'selected' },
+		onCreate: { action: 'created' },
+	},
 }
 
 export const Default = {
 	args: {
 		libraries: [
 			{
+				id: '1',
 				name: 'Family pictures',
 				rootPath: '/home/user/images/family',
-				id: '1',
 			},
 			{
+				id: '2',
 				name: 'Dog pictures',
 				rootPath: '/home/user/images/dogs',
-				id: '2',
 			},
 			{
+				id: '3',
 				name: 'Cat pictures',
 				rootPath: '/home/user/images/cats',
-				id: '3',
 			},
 		],
 	},
