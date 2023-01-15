@@ -25,16 +25,23 @@ object MainApp extends ZIOAppDefault:
     GraphQLApi.api.interpreter
       .flatMap(interpreter => {
 
-        val httpApp = Http.collectHttp[Request] {
-          case _ -> !! / "graphql" =>
+        val httpMediaStream = Http.collect[Request] {
+          case Method.GET -> !! / "media" / "preview" / mediaId =>
+            Response.text(s"Media preview: $mediaId")
+          case Method.GET -> !! / "media" / mediaId =>
+            Response.text(s"Media full: $mediaId")
+        }
+
+        val httpGraphql = Http.collectHttp[Request] {
+          case Method.GET -> !! / "graphql" =>
             ZHttpAdapter.makeHttpService(interpreter)
           case _ -> !! / "graphiql" => graphiql
-        } @@ Middleware.cors(corsCfg)
+        }
 
         Server
           .start(
             port = 8088,
-            http = httpApp,
+            http = (httpMediaStream ++ httpGraphql) @@ Middleware.cors(corsCfg),
           )
       })
       .provide(LibraryServiceImpl.layer, InMemoryLibraryStore.layer)

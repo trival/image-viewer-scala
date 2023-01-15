@@ -6,8 +6,13 @@ import caliban.schema.Annotations.GQLDescription
 import zio.*
 import xyz.trival.image_viewer.modules.library.model.Library
 import xyz.trival.image_viewer.modules.library.service.LibraryService
-import xyz.trival.image_viewer.modules.library.service.LibraryErrors.LibraryNotFound
+import xyz.trival.image_viewer.modules.library.service.LibraryErrors.{
+  LibraryNotFound,
+  RootPathNotDirectory,
+}
 import java.util.UUID
+import xyz.trival.image_viewer.modules.media.service.MediaService
+import xyz.trival.image_viewer.modules.media.model.Media
 
 // === Root schema definition ===
 
@@ -17,6 +22,12 @@ object Operations:
       @GQLDescription("test query")
       test: () => UIO[String],
       getLibraries: () => URIO[LibraryService, Seq[Library]],
+      getLibraryMedia: (
+          libId: String,
+      ) => ZIO[MediaService, LibraryNotFound, Seq[Media]],
+      reloadLibraryMedia: (
+          libId: String,
+      ) => ZIO[MediaService, LibraryNotFound, Seq[Media]],
   )
 
   // Mutations
@@ -38,7 +49,11 @@ object Operations:
   )
 
   case class Mutations(
-      createLibrary: CreateLibraryArgs => URIO[LibraryService, Library],
+      createLibrary: CreateLibraryArgs => ZIO[
+        LibraryService,
+        RootPathNotDirectory,
+        Library,
+      ],
       updateLibrary: UpdateLibraryArgs => ZIO[
         LibraryService,
         LibraryNotFound,
@@ -61,6 +76,10 @@ object Resolver:
       Clock.nanoTime
         .map("test query result, hello caliban graphql! " + _.toString),
     getLibraries = () => LibraryService.getLibraries,
+    getLibraryMedia =
+      (libId: String) => MediaService.getLibraryMedia(UUID.fromString(libId)),
+    reloadLibraryMedia = (libId: String) =>
+      MediaService.reloadLibraryMedia(UUID.fromString(libId)),
   )
 
   val mutations = Operations.Mutations(
@@ -87,7 +106,7 @@ end Resolver
 
 // === Api export ===
 
-type GqlEnv = LibraryService
+type GqlEnv = LibraryService | MediaService
 
 object GraphQLApi:
   val api = graphQL[GqlEnv, Operations.Queries, Operations.Mutations, Unit](

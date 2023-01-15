@@ -21,14 +21,9 @@ case class Media(
     date: Option[Long] = None,
     /** Optional video length in seconds */
     length: Option[Int] = None,
-    idSuffix: Int = 0,
 ) extends Ordered[Media]:
 
-  val id =
-    val hex = hashCode.toHexString
-    if idSuffix > 0
-    then hex + "_" + idSuffix.toHexString
-    else hex
+  val path = directory + '/' + filename
 
   val mediaType =
     // extract file extension from filename
@@ -46,14 +41,8 @@ case class Media(
       directory + ':' + filename + ':' + size + ':' + width + ':' + height,
     )
 
-  override def equals(other: Any): Boolean = other match
-    case that: Media =>
-      this.id == that.id
-    case _ => false
-
   override def compare(that: Media): Int =
-    val c = this.directory.compare(that.directory)
-    if c == 0 then this.filename.compare(that.filename) else c
+    this.path.compare(that.path)
 
 end Media
 
@@ -97,39 +86,29 @@ object Media:
 
   def collectInRootPath(
       rootPath: os.Path,
-      ignorePaths: List[os.Path],
+      ignorePaths: Seq[os.Path],
   ): Seq[Media] =
-    val files = os
+    os
       .walk(rootPath)
       .filter(file =>
         os.isFile(file)
           && ignorePaths.forall(ignorePath => !file.startsWith(ignorePath))
           && mediaExtensions.contains(file.ext.toLowerCase),
       )
-    val media = files.map(file =>
-      val relativePath = file.relativeTo(rootPath).toString
-      val (directory, filename) =
-        relativePath.splitAt(relativePath.lastIndexOf('/'))
-      Media(directory, filename.replace("/", "")),
-    )
-    createDestinctIds(media).sorted
+      .map(file =>
+        val relativePath = file.relativeTo(rootPath).toString
+        val (directory, filename) =
+          relativePath.splitAt(relativePath.lastIndexOf('/'))
+        Media(directory, filename.replace("/", "")),
+      )
+      .sorted
 
   def collectInRootPath(
       rootPath: String,
-      ignorePaths: List[String] = List(),
+      ignorePaths: Seq[String] = Seq(),
   ): Seq[Media] =
     val path = os.Path(rootPath)
     collectInRootPath(path, ignorePaths.map(path / _))
-
-  def createDestinctIds(media: Seq[Media]): Seq[Media] =
-    val grouped = media.groupBy(m => m.hashCode)
-    grouped.values.flatMap { ms =>
-      if ms.length == 1 then ms
-      else
-        ms.zipWithIndex.map { case (m, i) =>
-          m.copy(idSuffix = i)
-        }
-    }.toSeq
 
   given JsonDecoder[Media] = DeriveJsonDecoder.gen[Media]
   given JsonEncoder[Media] = DeriveJsonEncoder.gen[Media]

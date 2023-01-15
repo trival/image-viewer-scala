@@ -3,19 +3,26 @@ package xyz.trival.image_viewer.modules.library.service
 import xyz.trival.image_viewer.modules.library.model.{Library}
 import zio.*
 import java.util.UUID
-import xyz.trival.image_viewer.modules.library.service.LibraryErrors.LibraryNotFound
 import xyz.trival.image_viewer.modules.library.persistence.LibraryStorage
+import xyz.trival.image_viewer.utils.files.isPathADirectory
 
 object LibraryErrors:
   case class LibraryNotFound(id: UUID) extends Exception
+  case class RootPathNotDirectory(path: String) extends Exception {
+    override def getMessage = s"Path $path is not a directory"
+  }
 
 trait LibraryService:
+  import LibraryErrors.*
+
   def getLibraries: UIO[Seq[Library]]
+
+  def getLibraryById(id: UUID): IO[LibraryNotFound, Library]
 
   def createLibrary(
       name: String,
       rootPath: String,
-  ): UIO[Library]
+  ): IO[RootPathNotDirectory, Library]
 
   def updateLibrary(
       id: UUID,
@@ -29,6 +36,9 @@ trait LibraryService:
 object LibraryService:
   def getLibraries =
     ZIO.serviceWithZIO[LibraryService](_.getLibraries)
+
+  def getLibraryById(id: UUID) =
+    ZIO.serviceWithZIO[LibraryService](_.getLibraryById(id))
 
   def createLibrary(
       name: String,
@@ -54,15 +64,24 @@ object LibraryService:
 case class LibraryServiceImpl(
     store: LibraryStorage,
 ) extends LibraryService:
+
+  import LibraryErrors.*
+
   def getLibraries: UIO[Seq[Library]] =
     store.getLibraries()
+
+  def getLibraryById(id: UUID): IO[LibraryNotFound, Library] =
+    store.getLibrary(id)
 
   def createLibrary(
       name: String,
       rootPath: String,
-  ): UIO[Library] =
-    val lib = Library(name, rootPath)
-    store.saveLibrary(lib).as(lib)
+  ): IO[RootPathNotDirectory, Library] =
+    if !isPathADirectory(rootPath)
+    then ZIO.fail(RootPathNotDirectory(rootPath))
+    else
+      val lib = Library(name, rootPath)
+      store.saveLibrary(lib).as(lib)
 
   def updateLibrary(
       id: UUID,
