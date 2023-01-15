@@ -6,7 +6,6 @@ import { computed, ref } from 'vue'
 interface LibraryInput {
 	id: string
 	name?: string
-	rootPath?: string
 	ignorePaths?: string[]
 }
 

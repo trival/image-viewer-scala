@@ -1,4 +1,4 @@
-import GalleryView from './GalleryView.vue'
+import GalleryView from './LibraryView.vue'
 
 export default {
 	component: GalleryView,

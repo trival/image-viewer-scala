@@ -51,7 +51,7 @@
 									</button>
 								</div>
 							</TransitionChild>
-							<GallerySidebar
+							<LibrarySidebar
 								:library="library"
 								:on-settings-click="onSettingsClick"
 								:on-exit-click="onCloseLibrary"
@@ -68,7 +68,7 @@
 		<!-- Static sidebar for desktop -->
 		<div class="hidden md:fixed md:inset-y-0 md:flex md:w-72 md:flex-col">
 			<!-- Sidebar component, swap this element with another sidebar if you like -->
-			<GallerySidebar
+			<LibrarySidebar
 				:library="library"
 				:on-settings-click="onSettingsClick"
 				:on-exit-click="onCloseLibrary"
@@ -107,7 +107,7 @@ import {
 	TransitionRoot,
 } from '@headlessui/vue'
 import { Bars3Icon, XMarkIcon } from '@heroicons/vue/24/outline'
-import GallerySidebar from './GallerySidebar.vue'
+import LibrarySidebar from './LibrarySidebar.vue'
 import type { LibraryBaseData } from '@/lib/layout-types'
 
 export interface Props {
