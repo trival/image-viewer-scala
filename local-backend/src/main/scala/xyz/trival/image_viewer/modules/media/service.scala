@@ -61,3 +61,12 @@ case class MediaServiceImpl(
   ) = ???
 
 end MediaServiceImpl
+
+object MediaServiceImpl:
+  def layer =
+    ZLayer {
+      for
+        store <- ZIO.service[MediaStorage]
+        libraryService <- ZIO.service[LibraryService]
+      yield MediaServiceImpl(store, libraryService)
+    }

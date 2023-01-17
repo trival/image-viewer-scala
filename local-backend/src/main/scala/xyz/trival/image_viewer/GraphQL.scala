@@ -13,6 +13,7 @@ import xyz.trival.image_viewer.modules.library.service.LibraryErrors.{
 import java.util.UUID
 import xyz.trival.image_viewer.modules.media.service.MediaService
 import xyz.trival.image_viewer.modules.media.model.Media
+import caliban.schema.Schema
 
 // === Root schema definition ===
 
@@ -106,7 +107,7 @@ end Resolver
 
 // === Api export ===
 
-type GqlEnv = LibraryService | MediaService
+type GqlEnv = MediaService with LibraryService
 
 object GraphQLApi:
   val api = graphQL[GqlEnv, Operations.Queries, Operations.Mutations, Unit](

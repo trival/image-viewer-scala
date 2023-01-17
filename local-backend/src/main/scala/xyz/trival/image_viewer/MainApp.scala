@@ -7,6 +7,8 @@ import zhttp.http.*
 import zhttp.service.Server
 import zio.*
 import zio.stream.*
+import xyz.trival.image_viewer.modules.media.service.MediaServiceImpl
+import xyz.trival.image_viewer.modules.media.persistence.InMemoryMediaStore
 import xyz.trival.image_viewer.modules.library.service.LibraryServiceImpl
 import xyz.trival.image_viewer.modules.library.persistence.InMemoryLibraryStore
 import zhttp.http.middleware.Cors.CorsConfig
@@ -33,9 +35,9 @@ object MainApp extends ZIOAppDefault:
         }
 
         val httpGraphql = Http.collectHttp[Request] {
-          case Method.GET -> !! / "graphql" =>
+          case _ -> !! / "graphql" =>
             ZHttpAdapter.makeHttpService(interpreter)
-          case _ -> !! / "graphiql" => graphiql
+          case Method.GET -> !! / "graphiql" => graphiql
         }
 
         Server
@@ -44,5 +46,10 @@ object MainApp extends ZIOAppDefault:
             http = (httpMediaStream ++ httpGraphql) @@ Middleware.cors(corsCfg),
           )
       })
-      .provide(LibraryServiceImpl.layer, InMemoryLibraryStore.layer)
+      .provide(
+        LibraryServiceImpl.layer,
+        InMemoryLibraryStore.layer,
+        MediaServiceImpl.layer,
+        InMemoryMediaStore.layer,
+      )
       .exitCode

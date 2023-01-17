@@ -36,11 +36,6 @@ case class Media(
     else if Media.videoExtensions.contains(ext) then MediaType.Video
     else throw new Exception("Unknown media type")
 
-  override def hashCode: Int =
-    MurmurHash3.stringHash(
-      directory + ':' + filename + ':' + size + ':' + width + ':' + height,
-    )
-
   override def compare(that: Media): Int =
     this.path.compare(that.path)
 
