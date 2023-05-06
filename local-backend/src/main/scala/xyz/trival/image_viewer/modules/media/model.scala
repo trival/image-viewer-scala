@@ -1,7 +1,6 @@
 package xyz.trival.image_viewer.modules.media.model
 
 import zio.json.{DeriveJsonDecoder, DeriveJsonEncoder, JsonDecoder, JsonEncoder}
-
 import java.util.UUID
 import scala.util.hashing.MurmurHash3
 

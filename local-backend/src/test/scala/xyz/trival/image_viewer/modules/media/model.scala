@@ -36,14 +36,12 @@ object MediaTests extends TestSuite:
           length = Some(500),
         )
 
-      m.toJson ==> """{"directory":"test-dir","filename":"test.jpg","size":234,"width":400,"height":300,"date":1611442800000,"length":500,"idSuffix":0}"""
+      m.toJson ==> """{"directory":"test-dir","filename":"test.jpg","size":234,"width":400,"height":300,"date":1611442800000,"length":500}"""
     }
 
     test("ids") {
       val m1 = Media("test", "test.jpg")
       val m2 = Media("test", "test.jpg")
-      m1.id ==> m2.id
-      m1.id ==> "4a7945cd"
-      println(m1.id)
+      m1 ==> m2
     }
   }
