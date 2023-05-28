@@ -1,5 +1,7 @@
 # Trival Image Viewer
 
+** This repo is discontinued. The setup with Scala and graphql seems too complex for a relatively simple app. Instead, a new architecture with nodejs, nextjs and trpc is chosen for hopefully better productivity... **
+
 This is the repo of all backend and frontend projects for the Trival image libraries viewer.
 
 The project aims to let you manage and browse your directory based image libraries on your local computer.
