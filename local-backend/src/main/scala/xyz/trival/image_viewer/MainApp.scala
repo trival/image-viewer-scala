@@ -3,24 +3,33 @@ package xyz.trival.image_viewer
 import xyz.trival.image_viewer.graphql.*
 import caliban.GraphQL.graphQL
 import caliban.{RootResolver, ZHttpAdapter}
-import zhttp.http.*
-import zhttp.service.Server
+import zio.http.*
 import zio.*
 import zio.stream.*
 import xyz.trival.image_viewer.modules.media.service.MediaServiceImpl
 import xyz.trival.image_viewer.modules.media.persistence.InMemoryMediaStore
 import xyz.trival.image_viewer.modules.library.service.LibraryServiceImpl
 import xyz.trival.image_viewer.modules.library.persistence.InMemoryLibraryStore
-import zhttp.http.middleware.Cors.CorsConfig
+import java.io.File
+import zio.http.internal.middlewares.Cors.CorsConfig
+import zio.http.Header.{
+  AccessControlAllowMethods,
+  AccessControlAllowOrigin,
+  Origin,
+}
+import zio.http.HttpAppMiddleware.cors
+import caliban.interop.tapir.HttpInterpreter
 
 object MainApp extends ZIOAppDefault:
+  import sttp.tapir.json.zio.*
 
-  val graphiql = Http.fromStream(ZStream.fromResource("graphiql.html"))
+  val graphiql = Http.fromFile(File("graphiql.html"))
 
   val corsCfg: CorsConfig =
     CorsConfig(
-      anyOrigin = true,
-      anyMethod = true,
+      allowedOrigin = _ => Some(AccessControlAllowOrigin.All),
+      allowedMethods =
+        AccessControlAllowMethods(Method.GET, Method.POST, Method.OPTIONS),
     )
 
   override def run =
@@ -36,20 +45,19 @@ object MainApp extends ZIOAppDefault:
 
         val httpGraphql = Http.collectHttp[Request] {
           case _ -> !! / "graphql" =>
-            ZHttpAdapter.makeHttpService(interpreter)
+            ZHttpAdapter.makeHttpService(HttpInterpreter(interpreter))
           case Method.GET -> !! / "graphiql" => graphiql
         }
 
-        Server
-          .start(
-            port = 8088,
-            http = (httpMediaStream ++ httpGraphql) @@ Middleware.cors(corsCfg),
-          )
+        val app = (httpMediaStream ++ httpGraphql) @@ cors(corsCfg)
+
+        Server.serve(app.withDefaultErrorResponse)
       })
       .provide(
-        LibraryServiceImpl.layer,
-        InMemoryLibraryStore.layer,
-        MediaServiceImpl.layer,
-        InMemoryMediaStore.layer,
+        // LibraryServiceImpl.layer,
+        // InMemoryLibraryStore.layer,
+        // MediaServiceImpl.layer,
+        // InMemoryMediaStore.layer,
+        Server.defaultWithPort(8088),
       )
       .exitCode

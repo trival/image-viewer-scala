@@ -1,8 +1,10 @@
 package xyz.trival.image_viewer.graphql
 
 import caliban.RootResolver
-import caliban.GraphQL.graphQL
+import caliban.graphQL
 import caliban.schema.Annotations.GQLDescription
+import caliban.schema.Schema.auto._
+import caliban.schema.ArgBuilder.auto._
 import zio.*
 import xyz.trival.image_viewer.modules.library.model.Library
 import xyz.trival.image_viewer.modules.library.service.LibraryService
@@ -107,9 +109,8 @@ end Resolver
 
 // === Api export ===
 
-type GqlEnv = MediaService with LibraryService
+// type GqlEnv = MediaService with LibraryService
+// given Schema[GqlEnv, ] = Schema.gen
 
 object GraphQLApi:
-  val api = graphQL[GqlEnv, Operations.Queries, Operations.Mutations, Unit](
-    Resolver.root,
-  )
+  val api = graphQL(Resolver.root)
